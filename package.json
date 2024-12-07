@@ -1,0 +1,12 @@
+{
+    "name": "rolio",
+    "version": "1.0.0",
+    "scripts": {
+        "start": "concurrently \"npm run server\" \"npm run client\"",
+        "server": "cd server && nodemon server.js",
+        "client": "cd client && npm run dev"
+    },
+    "devDependencies": {
+        "concurrently": "^9.1.0"
+    }
+}
