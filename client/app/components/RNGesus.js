@@ -1,107 +1,152 @@
 import React, { useState } from 'react';
 import styles from './RNGesus.module.css';
+import Sidebar from './Sidebar';
 
 const RNGesus = () => {
   const [rollResult, setRollResult] = useState(null);
   const [selectedDie, setSelectedDie] = useState('d20');
-  const [min, setMin] = useState("");
-  const [max, setMax] = useState("");
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState("");
+  const [rollMode, setRollMode] = useState('neutral'); 
+  const [otherRoll, setOtherRoll] = useState(null); 
 
-  //Dice rolling logic
+  /* Store history and max/min count for each dice type */
+  const [rollHistories, setRollHistories] = useState({
+    d4: { rolls: [], maxCount: 0, minCount: 0 },
+    d6: { rolls: [], maxCount: 0, minCount: 0 },
+    d8: { rolls: [], maxCount: 0, minCount: 0 },
+    d10: { rolls: [], maxCount: 0, minCount: 0 },
+    d12: { rolls: [], maxCount: 0, minCount: 0 },
+    d20: { rolls: [], maxCount: 0, minCount: 0 },
+    d100: { rolls: [], maxCount: 0, minCount: 0 },
+  });
+
+  const diceOptions = ['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd100'];
+
   const rollEm = (sides) => Math.floor(Math.random() * sides) + 1;
 
-  //For all your other RNG needs
-  const pickANumber = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-
-  }
-
-  //Handle dice rolling
+  /* Function to handle the roll */
   const handleRoll = () => {
-    const sides = parseInt(selectedDie.slice(1), 10); //should extract int from die type eg. d20
-    const result = rollEm(sides);
+    const sides = parseInt(selectedDie.slice(1), 10);
+
+    let result;
+    let roll1, roll2;
+
+    /* Handle Advantage, Disadvantage, or Neutral roll */
+    if (rollMode === 'advantage') {
+      /* Roll twice and take the highest */
+      roll1 = rollEm(sides);
+      roll2 = rollEm(sides);
+      result = Math.max(roll1, roll2);
+      setOtherRoll({ roll1, roll2, selected: result === roll1 ? roll1 : roll2, mode: 'Advantage' });
+    } else if (rollMode === 'disadvantage') {
+      /* Roll twice and take the lowest */
+      roll1 = rollEm(sides);
+      roll2 = rollEm(sides);
+      result = Math.min(roll1, roll2);
+      setOtherRoll({ roll1, roll2, selected: result === roll1 ? roll1 : roll2, mode: 'Disadvantage' });
+    } else {
+      /* Normal roll (Neutral) */
+      result = rollEm(sides);
+      setOtherRoll(null); 
+    }
+
+    const isMax = result === sides;
+    const isMin = result === 1;
+
+    /* Prepare new roll object */
+    const newRoll = {
+      die: selectedDie,
+      result,
+      isMax,
+      isMin,
+    };
+
+    setRollHistories((prevHistories) => {
+      const currentHistory = prevHistories[selectedDie].rolls;
+      const newHistory = [newRoll, ...currentHistory].slice(0, 10); 
+
+      const maxCount = prevHistories[selectedDie].maxCount + (isMax ? 1 : 0);
+      const minCount = prevHistories[selectedDie].minCount + (isMin ? 1 : 0);
+
+      return {
+        ...prevHistories,
+        [selectedDie]: {
+          rolls: newHistory,
+          maxCount,
+          minCount,
+        },
+      };
+    });
+
     setRollResult(result);
   };
 
-  //Handle random number generation
-  const handlePickANumber = () => {
-    try {
-      const minValue = parseInt(min, 10);
-      const maxValue = parseInt(max, 10);
-
-      if (isNaN(minValue) || isNaN(maxValue)) {
-        throw new Error("Error: enter a valid number for min and max");
-      }
-      if (minValue < 0 || maxValue < 0) {
-        throw new Error("Error: only positive integers are allowed")
-      }
-      if (min === max) {
-        throw new Error("Error: numbers cannot be equal")
-      }
-
-      let randNum = 0;
-      if (minValue > maxValue) {
-        randNum = pickANumber(maxValue, minValue);
-        setResult(randNum);
-        setError("");
-      }
-      randNum = pickANumber(minValue, maxValue);
-      setResult(randNum);
-      setError("");
-    } catch (err) {
-      setError(err.message);
-      setResult(null);
-    }
-  }
-
   return (
     <div className={styles.container}>
-      <div>
-      <h1 className={styles.title}>Roll Away!</h1>
-      <p className={styles.label}>Select Die:</p>
-      <ul className={styles.diceList}>
-        {['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd100'].map((die) => (
-          <li key={die}
-          className={`${styles.die} ${selectedDie == die? styles.selected : ''}`}
-          onClick={() => setSelectedDie(die)}>
-            {die.toUpperCase()}
-          </li>
-        ))}
-      </ul>
-      <button onClick={handleRoll} className={styles.button}>Roll</button>
-      {rollResult !== null && (
-        <p className={styles.result}>
-          You rolled a <strong>{selectedDie.toUpperCase()}</strong>: {rollResult}
-        </p>
-      )}
-      </div>
+      <div className={styles.mainContent}>
+        <h1 className={styles.title}>Roll Away!</h1>
+        <ul className={styles.diceList}>
+          {diceOptions.map((die) => (
+            <li
+              key={die}
+              className={`${styles.die} ${selectedDie === die ? styles.selected : ''}`}
+              onClick={() => setSelectedDie(die)}
+            >
+              {die.toUpperCase()}
+            </li>
+          ))}
+        </ul>
 
-      <div>
-        <h1 className={styles.title}>Pick A Number</h1>
-        <label className={styles.label}>
-          Min:
-            <input type="number"
-              value={min}
-              onChange={(e) => setMin(e.target.value)}
-              className={styles.input} />
-        </label>
-        <label className={styles.label}>
-          Max:
-            <input type="number"
-              value={max}
-              onChange={(e) => setMax(e.target.value)}
-              className={styles.input} />
-        </label>
-        <button onClick={handlePickANumber} className='ml-10'>Pick</button>
-        {error && <p className='color red-500'>{error}</p>}
-        {result !== null && (
-          <p>Number between {min} and {max}: <strong>{result}</strong></p>
+        {/* Advantage/Disadvantage/Neutral Buttons */}
+        <div className={styles.rollModeButtons}>
+          <button
+            className={`${styles.button} ${rollMode === 'advantage' ? styles.selected : ''}`}
+            onClick={() => setRollMode('advantage')}
+          >
+            Advantage
+          </button>
+          <button
+            className={`${styles.button} ${rollMode === 'disadvantage' ? styles.selected : ''}`}
+            onClick={() => setRollMode('disadvantage')}
+          >
+            Disadvantage
+          </button>
+          <button
+            className={`${styles.button} ${rollMode === 'neutral' ? styles.selected : ''}`}
+            onClick={() => setRollMode('neutral')}
+          >
+            Neutral
+          </button>
+        </div>
+
+        <button onClick={handleRoll} className={styles.button}>
+          Roll
+        </button>
+
+        {rollResult !== null && (
+          <p className={styles.result}>
+            You rolled a <strong>{selectedDie.toUpperCase()}</strong>: {rollResult}
+          </p>
+        )}
+
+        {/* Show both rolls for Advantage/Disadvantage */}
+        {otherRoll && (
+          <p className={styles.otherRollResult}>
+            {otherRoll.mode}: Roll 1 = {otherRoll.roll1}, Roll 2 = {otherRoll.roll2}. You got: {otherRoll.selected}.
+          </p>
         )}
       </div>
+
+      {/* Sidebar Component */}
+      <Sidebar
+        rollHistory={rollHistories[selectedDie].rolls} 
+        selectedDie={selectedDie}
+        setSelectedDie={setSelectedDie}
+        diceOptions={diceOptions}
+        maxCount={rollHistories[selectedDie].maxCount} 
+        minCount={rollHistories[selectedDie].minCount} 
+      />
     </div>
   );
 };
 
-export default RNGesus
+export default RNGesus;
