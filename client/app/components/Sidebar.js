@@ -5,7 +5,8 @@ const Sidebar = ({ rollHistory, selectedDie, setSelectedDie, diceOptions, maxCou
   return (
     <div className={styles.sidebar}>
       <h2 className={styles.historyTitle}>Roll History</h2>
-      
+
+      {/* Dropdown for selecting dice */}
       <select
         value={selectedDie}
         onChange={(e) => setSelectedDie(e.target.value)}
@@ -17,18 +18,18 @@ const Sidebar = ({ rollHistory, selectedDie, setSelectedDie, diceOptions, maxCou
           </option>
         ))}
       </select>
-      
-      {/* Scrollable list with only 10 entries visible */}
+
+      {/* Scrollable roll history */}
       <div className={styles.scrollable}>
         <ul className={styles.historyList}>
           {rollHistory.map((roll, index) => (
             <li
               key={index}
               className={`${styles.historyItem} ${
-                roll.isMax ? styles.maxRoll : roll.isMin ? styles.minRoll : ''
+                roll.result === roll.sides ? styles.maxRoll : roll.result === 1 ? styles.minRoll : ''
               }`}
             >
-              {roll.die.toUpperCase()} - {roll.result}
+              {selectedDie.toUpperCase()} - {roll.result}
             </li>
           ))}
         </ul>
@@ -37,10 +38,10 @@ const Sidebar = ({ rollHistory, selectedDie, setSelectedDie, diceOptions, maxCou
       {/* Max/Min Roll Counters */}
       <div className={styles.counterContainer}>
         <p className={styles.counterText}>
-          <span className={styles.maxRollCounter}>Max Rolls: {maxCount}</span>
+          Max Rolls: <span className={styles.maxRollCounter}>{maxCount}</span>
         </p>
         <p className={styles.counterText}>
-          <span className={styles.minRollCounter}>Min Rolls: {minCount}</span>
+          Min Rolls: <span className={styles.minRollCounter}>{minCount}</span>
         </p>
       </div>
     </div>
