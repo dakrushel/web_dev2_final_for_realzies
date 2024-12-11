@@ -1,18 +1,54 @@
 .container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 90vh;
+  justify-content: space-between;
   padding: 20px;
-  background-color: #492e22;
+  color: grey;
 }
 
 .mainContent {
+  flex: 1;
   max-width: 700px;
+  margin: 0 auto;
+}
+
+.sidebar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 12.5vw; 
+  height: 100vh; 
+  background-color: #f9f9f9;
+  border-left: 2px solid #ddd;
   padding: 20px;
-  background-color: #97733e;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; 
+}
+
+.historyTitle {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: grey;
+}
+
+.dropdown {
+  margin-bottom: 15px;
+  width: 100%;
+  padding: 5px;
+  font-size: 1rem;
+}
+
+.historyList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.historyItem {
+  background-color: #f1f1f1;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  font-size: 1rem;
 }
 
 .title {
@@ -20,53 +56,25 @@
   margin-bottom: 20px;
 }
 
-.diceList {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.die {
-  padding: 10px 15px;
-  border: 2px solid #2d0f0c;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: 0.3s;
-}
-
-.die:hover {
-  background-color: #cfa869;
-  color: white;
-  font-weight: bold;
-}
-
-.selected {
-  background-color: #a05c29;
-  color: white;
-  font-weight: bold;
-}
-
-.rollModeButtons {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 20px;
+.label {
+  font-size: 1rem;
+  margin-right: 10px;
 }
 
 .button {
-  padding: 10px 15px;
-  background-color: #cf961a;
-  color: white;
+  margin-left: 10px;
+  padding: 10px 20px; 
+  font-size: 1.25rem; 
+  cursor: pointer;
+  background-color: #007BFF; 
+  color: white; 
   border: none;
   border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: 0.3s;
+  transition: background-color 0.3s ease;
 }
 
 .button:hover {
-  background-color:#492e22;
+  background-color: #0056b3; 
 }
 
 .result {
@@ -74,48 +82,89 @@
   font-size: 1.25rem;
 }
 
-.otherRollResult {
-  font-size: 1rem;
-  margin-top: 10px;
-  color: #c21919;
-  font-weight: bold;
-}
-
-.rollHistory {
-  margin-top: 20px;
+.diceList {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
   list-style: none;
   padding: 0;
-  background-color: #927b3f;
+  margin: 20px 0;
 }
 
-.rollHistory li {
-  background-color: #927b3f;
-  padding: 10px;
-  margin: 5px 0;
+.die {
+  padding: 10px 15px;
+  border: 2px solid #007BFF;
   border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  text-align: center;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-.titleHeading {
-  font-size: 1.5rem;
-  margin-top: 20px;
+.die:hover {
+  background-color: #007BFF;
+  color: white;
 }
 
-.selectDropdown {
-  padding: 10px;
-  font-size: 1rem;
-  border-radius: 5px;
-  margin-bottom: 10px;
-}
-/* New class for green selected items */
-.selectedGreen {
-  background-color: #377231;
+.selected {
+  background-color: #007BFF;
   color: white;
   font-weight: bold;
 }
 
-/* Optional: add a hover effect for a more interactive UI */
-.selectedGreen:hover {
-  background-color: darkgreen;
+.error {
+  color: red;
+  font-size: 1rem;
+}
+
+/* Style the Advantage, Disadvantage, and Neutral buttons */
+.rollModeButtons {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.button {
+  padding: 8px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #e0e0e0;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #c0c0c0;
+}
+
+.selected {
+  background-color: #007bff;
+  color: white;
   font-weight: bold;
+}
+
+
+.rollModeButtons button:nth-child(1) {
+  background-color: #17692a; 
+}
+
+.rollModeButtons button:nth-child(2) {
+  background-color: #75232b; 
+}
+
+.rollModeButtons button:nth-child(3) {
+  background-color: #124b83; 
+}
+
+.rollModeButtons button.selected:nth-child(1) {
+  background-color: #2dc94e; 
+}
+
+.rollModeButtons button.selected:nth-child(2) {
+  background-color: #dc3545; 
+}
+
+.rollModeButtons button.selected:nth-child(3) {
+  background-color: #16c7d3; 
 }
 
