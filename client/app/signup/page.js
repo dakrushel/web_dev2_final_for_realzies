@@ -5,7 +5,7 @@ import styles from './SignUp.module.css'; // Add a CSS module for styling
 const SignUp = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState(false); // Track success state
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -15,6 +15,7 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess(false); // Reset success state
   
     try {
       const res = await fetch('http://localhost:5000/signup', {
@@ -23,19 +24,29 @@ const SignUp = () => {
         body: JSON.stringify(formData),
       });
   
+      // Check Content-Type
+      const contentType = res.headers.get('Content-Type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error('Invalid server response: Expected JSON');
+      }
+  
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || 'Sign-up failed');
       }
   
-      // Save userId in localStorage
       localStorage.setItem('userId', data.user._id);
-      router.push('/'); // Redirect to home page
+      setSuccess(true);
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
     } catch (err) {
+      console.error('Error:', err.message);
       setError(err.message);
     }
   };
-
+  
+  
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Sign Up</h1>
@@ -73,7 +84,9 @@ const SignUp = () => {
           </button>
         </form>
         {error && <p className={styles.error}>{error}</p>}
-        {success && <p className={styles.success}>Sign-up successful!</p>}
+        {success && (
+          <p className={styles.success}>Sign-up successful! Redirecting...</p>
+        )}
       </div>
     </div>
   );

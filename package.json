@@ -1,19 +1,22 @@
 {
     "name": "rolio",
     "version": "1.0.0",
+    "private": true,
     "scripts": {
-        "start": "concurrently \"npm run server\" \"npm run client\"",
-        "server": "cd server && nodemon server.js",
-        "client": "cd client && npm run dev"
+      "start": "concurrently \"npm run server\" \"npm run client\"",
+      "server": "npm run dev --prefix server",
+      "client": "npm start --prefix client",
+      "install:all": "npm install --prefix server && npm install --prefix client"
     },
     "devDependencies": {
-        "concurrently": "^9.1.0"
+      "concurrently": "^9.1.0",
+      "nodemon": "^3.0.1"
     },
-    "type": "module",
     "dependencies": {
-        "express": "^4.18.2",
-        "cors": "^2.8.5",
-        "mongoose": "^7.0.4",
-        "body-parser": "^1.20.1"
-    }      
-}
+      "express": "^4.18.2",
+      "cors": "^2.8.5",
+      "mongoose": "^7.0.4",
+      "body-parser": "^1.20.1"
+    }
+  }
+  

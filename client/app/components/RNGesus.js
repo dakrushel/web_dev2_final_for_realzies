@@ -22,8 +22,30 @@ const RNGesus = () => {
     const storedUserId = localStorage.getItem('userId');
     if (storedUserId) {
       setUserId(storedUserId);
-    }
-  }, []);
+
+    // Fetch roll history for logged-in user
+    fetch(`http://localhost:5000/api/rolls/${storedUserId}`)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.error) {
+        console.error('Error fetching roll history:', data.error);
+      } else {
+        const updatedHistories = { ...rollHistories };
+        data.forEach((roll) => {
+          if (!updatedHistories[roll.rollType]) {
+            updatedHistories[roll.rollType] = [];
+          }
+          updatedHistories[roll.rollType].push({
+            result: roll.result,
+            sides: parseInt(roll.rollType.slice(1), 10),
+          });
+        });
+        setRollHistories(updatedHistories);
+      }
+    })
+    .catch((err) => console.error('Error fetching roll history:', err.message));
+}
+}, [rollHistories]);
 
   const [selectedAbility, setSelectedAbility] = useState('strength');
   const [abilityCheckResult, setAbilityCheckResult] = useState(null);
@@ -80,8 +102,10 @@ const RNGesus = () => {
       });
 
       if (!res.ok) {
-        throw new Error('Failed to save roll');
+        const errorData = await res.json();
+        throw new Error('Failed to save roll', errorData.error);
         } 
+        
       } catch (err) {
         console.error('Error saving roll:', err.message);
       }
