@@ -1,0 +1,13 @@
+.historyContainer {
+  text-align: left;
+}
+
+.historyList {
+  list-style: none;
+  padding: 0;
+}
+
+.historyList li {
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
