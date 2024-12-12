@@ -1,0 +1,70 @@
+.customRollContainer {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 20px auto;
+  }
+  
+  .customRollTitle {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: grey;
+    text-align: center;
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+  
+  .formLabel {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: grey;
+  }
+  
+  .inputField,
+  .selectField {
+    padding: 10px;
+    font-size: 1rem;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .inputField:focus,
+  .selectField:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .addButton {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .addButton:hover {
+    background-color: #0056b3;
+  }
+  
+  .errorMessage {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  

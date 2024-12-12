@@ -5,11 +5,14 @@ const Sidebar = ({ rollHistory, selectedDie, setSelectedDie, diceOptions, maxCou
   return (
     <div className={styles.sidebar}>
       <h2 className={styles.historyTitle}>Roll History</h2>
-      
+
+      {/* Dropdown for selecting dice */}
       <select
         value={selectedDie}
         onChange={(e) => setSelectedDie(e.target.value)}
         className={styles.dropdown}
+        aria-label="Select dice type"
+        disabled={diceOptions.length === 0}
       >
         {diceOptions.map((die) => (
           <option key={die} value={die}>
@@ -17,31 +20,37 @@ const Sidebar = ({ rollHistory, selectedDie, setSelectedDie, diceOptions, maxCou
           </option>
         ))}
       </select>
-      
-      {/* Scrollable list with only 10 entries visible */}
+
+      {/* Scrollable roll history */}
       <div className={styles.scrollable}>
-        <ul className={styles.historyList}>
-          {rollHistory.map((roll, index) => (
-            <li
-              key={index}
-              className={`${styles.historyItem} ${
-                roll.isMax ? styles.maxRoll : roll.isMin ? styles.minRoll : ''
-              }`}
-            >
-              {roll.die.toUpperCase()} - {roll.result}
-            </li>
-          ))}
-        </ul>
+        {rollHistory.length > 0 ? (
+          <ul className={styles.historyList} aria-label={`Roll history for ${selectedDie.toUpperCase()}`}>
+            {rollHistory.map((roll, index) => (
+              <li
+                key={index}
+                className={`${styles.historyItem} ${
+                  roll.result === roll.sides ? styles.maxRoll : roll.result === 1 ? styles.minRoll : ''
+                }`}
+              >
+                {selectedDie.toUpperCase()} - {roll.result}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className={styles.noHistory}>No rolls yet for {selectedDie.toUpperCase()}.</p>
+        )}
       </div>
 
       {/* Max/Min Roll Counters */}
       <div className={styles.counterContainer}>
-        <p className={styles.counterText}>
-          <span className={styles.maxRollCounter}>Max Rolls: {maxCount}</span>
-        </p>
-        <p className={styles.counterText}>
-          <span className={styles.minRollCounter}>Min Rolls: {minCount}</span>
-        </p>
+        <div className={styles.counter}>
+          <span className={styles.counterLabel}>Max Rolls:</span>
+          <span className={styles.counterValue}>{maxCount}</span>
+        </div>
+        <div className={styles.counter}>
+          <span className={styles.counterLabel}>Min Rolls:</span>
+          <span className={styles.counterValue}>{minCount}</span>
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,11 @@ const RollHistory = require('../models/RollHistory');
 //Log new rolls
 const logRoll = async (req, res) => {
     const { userId, rollType, result } = req.body;
+
+    if (!userId || !rollType || result === undefined) {
+        return res.status(400).json({ error: 'All fields are required.' });
+      }
+      
     try {
         const roll = new RollHistory({ userId, rollType, result });
         await roll.save();
