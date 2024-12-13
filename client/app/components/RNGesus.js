@@ -95,20 +95,22 @@ const RNGesus = () => {
 
     if (userId) {
       try {
-        const res = await fetch('http://localhost:5000/rolls', {
+        const res = await fetch('http://localhost:5000/api/rolls', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId, rollType: selectedDie, result }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error('Failed to save roll', errorData.error);
-        } 
-        
+        });
+      
+        console.log('Server response:', res);
+      
+        if (!res.ok) {
+          const errorText = await res.text(); // Read the full response as text
+          console.error('Error response:', errorText);
+          throw new Error('Failed to save roll');
+        }
       } catch (err) {
         console.error('Error saving roll:', err.message);
-      }
+      }      
     }
 
   };

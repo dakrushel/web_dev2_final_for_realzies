@@ -43,11 +43,11 @@ const Sidebar = ({ rollHistory, selectedDie, setSelectedDie, diceOptions, maxCou
 
       {/* Max/Min Roll Counters */}
       <div className={styles.counterContainer}>
-        <div className={styles.counter}>
+        <div className={styles.maxRollCounter}>
           <span className={styles.counterLabel}>Max Rolls:</span>
           <span className={styles.counterValue}>{maxCount}</span>
         </div>
-        <div className={styles.counter}>
+        <div className={styles.minRollCounter}>
           <span className={styles.counterLabel}>Min Rolls:</span>
           <span className={styles.counterValue}>{minCount}</span>
         </div>

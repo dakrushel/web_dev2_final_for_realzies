@@ -1,18 +1,45 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useUser } from './components/UserContext';
 import RNGesus from './components/RNGesus';
 
 export default function Home() {
-  const [user, setUser] = useState(null);
+  const { user } = useUser();
 
-  useEffect(() => {
-    // Check if the user is logged in
-    const userId = localStorage.getItem('userId');
-    const userName = localStorage.getItem('userName');
-    if (userId) {
-      setUser({ id: userId, name: userName });
-    }
-  }, []);
+  // Update the user state from localStorage
+  // const updateUserFromLocalStorage = () => {
+  //   const userId = localStorage.getItem('userId');
+  //   const userName = localStorage.getItem('userName');
+  //   if (userId) {
+  //     setUser({ id: userId, name: userName });
+  //   } else {
+  //     setUser(null);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   // Initialize user state on component mount
+  //   updateUserFromLocalStorage();
+
+  //   // Add a listener to detect localStorage changes
+  //   const handleStorageChange = () => {
+  //     updateUserFromLocalStorage();
+  //   };
+
+  //   window.addEventListener('storage', handleStorageChange);
+  //   return () => {
+  //     window.removeEventListener('storage', handleStorageChange);
+  //   };
+  // }, []);
+
+  // useEffect(() => {
+  //   // Check if the user is logged in
+  //   const userId = localStorage.getItem('userId');
+  //   const userName = localStorage.getItem('userName');
+  //   if (userId) {
+  //     setUser({ id: userId, name: userName });
+  //   }
+  // }, []);
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 bg-background">

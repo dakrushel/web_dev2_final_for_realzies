@@ -18,11 +18,15 @@ const SignIn = () => {
     setError('');
 
     try {
+      console.log('trying to post from /signin/page')
+      console.log('Form data being sent: ', formData)
       const res = await fetch('http://localhost:5000/api/signin', { // Ensure the correct endpoint
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+
+      console.log('Fetch response: ', res)
 
       if (!res.ok) {
         const data = await res.json().catch(() => {
@@ -36,6 +40,7 @@ const SignIn = () => {
 
       // Save userId in localStorage
       localStorage.setItem('userId', data.user.id);
+      localStorage.setItem('userName', data.user.name);
       localStorage.setItem('userEmail', data.user.email);
       
       alert('Signed In');
