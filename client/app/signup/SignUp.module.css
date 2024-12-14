@@ -28,6 +28,7 @@
   }
   
   .input {
+    color: black;
     margin-bottom: 1rem;
     padding: 0.5rem;
     border: 1px solid #97733e; /* Border color matching the theme */

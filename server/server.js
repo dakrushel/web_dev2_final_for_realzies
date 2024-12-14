@@ -29,7 +29,7 @@ app.use('/api/signin', signinRoutes); // New Sign-in endpoint
 
 
 // Test route
-app.get('/', (req, res) => res.send('API is running...'));
+app.get('/', (_req, res) => res.send('API is running...'));
 
 // Start server
 const PORT = process.env.PORT || 5000; // Use port 5000 unless specified in .env

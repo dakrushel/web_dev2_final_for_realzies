@@ -1,9 +1,11 @@
 'use client';
 import React, { useState } from 'react';
 import styles from './SignUp.module.css'; // Add a CSS module for styling
+import { useUser } from '../components/UserContext';
 
 const SignUp = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const { setUser } = useUser();
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false); // Track success state
 
@@ -16,7 +18,12 @@ const SignUp = () => {
     e.preventDefault();
     setError('');
     setSuccess(false); // Reset success state
-  
+
+    if (formData.password !== formData.confirmPassword) {
+    setError('Passwords do not match');
+    return;
+    }      
+
     try {
       const res = await fetch('http://localhost:5000/api/signup', {
         method: 'POST',
@@ -30,12 +37,19 @@ const SignUp = () => {
         throw new Error('Invalid server response: Expected JSON');
       }
   
-      const data = await res.json();
       if (!res.ok) {
+        const data = await res.json();
         throw new Error(data.error || 'Sign-up failed');
       }
-  
+      
+      const data = await res.json();
+
       localStorage.setItem('userId', data.user._id);
+      localStorage.setItem('userName', data.user.name);
+      localStorage.setItem('userEmail', data.user.email);
+      
+      setUser({ id: data.user._id, name: data.user.name });
+
       setSuccess(true);
       setTimeout(() => {
         window.location.href = '/';
@@ -79,6 +93,16 @@ const SignUp = () => {
             className={styles.input}
             required
           />
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            className={styles.input}
+            required
+          />
+
           <button type="submit" className={styles.button}>
             Sign Up
           </button>

@@ -9,40 +9,9 @@ const NavBar = () => {
   const { user, setUser } = useUser();
   const router = useRouter();
 
-  // // Also pdate the user state from localStorage
-  // const updateUserFromLocalStorage = () => {
-  //   const userId = localStorage.getItem('userId');
-  //   const userName = localStorage.getItem('userName');
-  //   if (userId) {
-  //     setUser({ id: userId, name: userName });
-  //   } else {
-  //     setUser(null);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const userId = localStorage.getItem('userId');
-  //   const userName = localStorage.getItem('userName');
-  //   if (userId) {
-  //     setUser({ id: userId, name: userName });
-  //   } else {
-  //     setUser(null);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   updateUserFromLocalStorage();
-
-  //   // Listen for changes in localStorage (e.g., from another tab or Home component)
-  //   const handleStorageChange = () => {
-  //     updateUserFromLocalStorage();
-  //   };
-
-  //   window.addEventListener('storage', handleStorageChange);
-  //   return () => {
-  //     window.removeEventListener('storage', handleStorageChange);
-  //   };
-  // }, []);
+  useEffect(() => {
+  console.log('Current user:', user);
+}, [user]);
 
   const handleHome = () => {  
     router.push('/'); // Navigate to the home page
@@ -55,6 +24,10 @@ const NavBar = () => {
   const handleSignIn = () => {
     router.push('/signin'); // Navigate to the sign-in page
   };
+
+  useEffect(() => {
+    console.log('Current user:', user);
+  }, [user]);
 
   const handleSignOut = () => {
     //Clear user data from localStorage
@@ -103,3 +76,39 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
+
+  // // Also pdate the user state from localStorage
+  // const updateUserFromLocalStorage = () => {
+  //   const userId = localStorage.getItem('userId');
+  //   const userName = localStorage.getItem('userName');
+  //   if (userId) {
+  //     setUser({ id: userId, name: userName });
+  //   } else {
+  //     setUser(null);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const userId = localStorage.getItem('userId');
+  //   const userName = localStorage.getItem('userName');
+  //   if (userId) {
+  //     setUser({ id: userId, name: userName });
+  //   } else {
+  //     setUser(null);
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   updateUserFromLocalStorage();
+
+  //   // Listen for changes in localStorage (e.g., from another tab or Home component)
+  //   const handleStorageChange = () => {
+  //     updateUserFromLocalStorage();
+  //   };
+
+  //   window.addEventListener('storage', handleStorageChange);
+  //   return () => {
+  //     window.removeEventListener('storage', handleStorageChange);
+  //   };
+  // }, []);

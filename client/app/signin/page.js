@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'; // Import useRouter
 import styles from './SignIn.module.css'; // Add a CSS module for styling
+import { useUser } from '../components/UserContext'; // Adjust the path if needed
 
 const SignIn = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const router = useRouter(); // Initialize router
+  const { setUser } = useUser(); // Get setUser from the UserContext
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,6 +29,8 @@ const SignIn = () => {
       });
 
       console.log('Fetch response: ', res)
+      console.log('Response status:', res.status); //debugging added by Gabby
+      console.log('Response headers:', res.headers.get('content-type')); //debugging added by Gabby 
 
       if (!res.ok) {
         const data = await res.json().catch(() => {
@@ -42,6 +46,8 @@ const SignIn = () => {
       localStorage.setItem('userId', data.user.id);
       localStorage.setItem('userName', data.user.name);
       localStorage.setItem('userEmail', data.user.email);
+
+      setUser({ id: data.user.id, name: data.user.name }); 
       
       alert('Signed In');
       router.push('/'); // Redirect to the home page

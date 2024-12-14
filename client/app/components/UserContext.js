@@ -11,12 +11,14 @@ export const useUser = () => useContext(UserContext);
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  // Update the user state from localStorage
+
   const updateUserFromLocalStorage = () => {
     const userId = localStorage.getItem('userId');
     const userName = localStorage.getItem('userName');
+    // const userEmail = localStorage.getItem('userEmail');
+
     if (userId) {
-      setUser({ id: userId, name: userName });
+      setUser({ id: userId, name: userName});
     } else {
       setUser(null);
     }
@@ -43,3 +45,50 @@ export const UserProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
+
+  
+
+  // useEffect(() => {
+  //   // Initialize user state on mount
+  //   const storedUserId = localStorage.getItem('userId');
+  //   const storedUserName = localStorage.getItem('userName');
+  //   const storedUserEmail = localStorage.getItem('userEmail');
+
+  //   if (storedUserId && storedUserName) {
+  //     setUser({ id: storedUserId, name: storedUserName, email: storedUserEmail });
+  //   } else {
+  //     setUser(null);
+  //   }
+  // }, []);
+
+  // Update the user state from localStorage
+
+   // Listen for storage changes to update user state
+//    useEffect(() => {
+//     const handleStorageChange = () => {
+//       const storedUserId = localStorage.getItem('userId');
+//       const storedUserName = localStorage.getItem('userName');
+//       const storedUserEmail = localStorage.getItem('userEmail');
+
+//       if (storedUserId && storedUserName) {
+//         setUser({ id: storedUserId, name: storedUserName, email: storedUserEmail });
+//       } else {
+//         setUser(null);
+//       }
+//     };
+
+//     window.addEventListener('storage', handleStorageChange);
+
+//     return () => {
+//       window.removeEventListener('storage', handleStorageChange);
+//     };
+//   }, []);
+
+//   return (
+//     <UserContext.Provider value={{ user, setUser }}>
+//       {children}
+//     </UserContext.Provider>
+//   );
+// };
+
+  

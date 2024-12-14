@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useUser } from './components/UserContext';
 import RNGesus from './components/RNGesus';
 
@@ -40,6 +40,10 @@ export default function Home() {
   //     setUser({ id: userId, name: userName });
   //   }
   // }, []);
+  useEffect(() => {
+    console.log("User state in Home:", user);
+  }, [user]);
+  
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 bg-background">
