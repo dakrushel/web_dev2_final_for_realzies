@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './CustomRollInput.module.css';
-import RNGesus from '../RNGesus';
+import RNGesus from '../RNGesus1';
 
 const CustomRoll = ({ onAddCustomRoll }) => {
   const [title, setTitle] = useState('');

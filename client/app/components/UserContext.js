@@ -1,5 +1,7 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { onAuthStateChanged } from "firebase/auth"; // Import Firebase method
+import { auth } from '../../firebase'; // Ensure this points to your Firebase config file
 
 // Create UserContext
 const UserContext = createContext();
@@ -11,32 +13,21 @@ export const useUser = () => useContext(UserContext);
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-
-  const updateUserFromLocalStorage = () => {
-    const userId = localStorage.getItem('userId');
-    const userName = localStorage.getItem('userName');
-    // const userEmail = localStorage.getItem('userEmail');
-
-    if (userId) {
-      setUser({ id: userId, name: userName});
-    } else {
-      setUser(null);
-    }
-  };
-
   useEffect(() => {
-    // Initialize user state on mount
-    updateUserFromLocalStorage();
+    // Monitor Firebase Auth state
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser({
+          id: firebaseUser.uid,
+          name: firebaseUser.displayName || firebaseUser.email, // Use name or email
+          email: firebaseUser.email,
+        });
+      } else {
+        setUser(null); // No user is logged in
+      }
+    });
 
-    // Listen for changes to localStorage
-    const handleStorageChange = () => {
-      updateUserFromLocalStorage();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    return () => unsubscribe(); // Cleanup subscription on unmount
   }, []);
 
   return (

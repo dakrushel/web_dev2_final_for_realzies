@@ -8,8 +8,12 @@ const RollHistory = ({ localHistory, userId }) => {
   // Fetch saved rolls if user is signed in
   useEffect(() => {
     const fetchSavedRolls = async () => {
-      if (!userId) return; // Only fetch for logged-in users
-
+      // if (!userId) return; // Only fetch for logged-in users
+      if (!userId) {
+        setSavedRolls([]); // Clear saved rolls if user is not logged in
+        return;
+      }
+      
       try {
         const res = await fetch(`http://localhost:5000/rolls/${userId}`);
         if (!res.ok) {

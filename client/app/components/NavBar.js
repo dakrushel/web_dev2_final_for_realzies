@@ -34,8 +34,9 @@ const NavBar = () => {
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
     localStorage.removeItem('userEmail');
+
     setUser(null);   //Update state to reflect sign-out
-    router.push('/') //Optionally redirect to the home page
+    router.push('/');
   };
   
   return (

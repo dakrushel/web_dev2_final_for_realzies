@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import styles from './SignUp.module.css'; // Add a CSS module for styling
 import { useUser } from '../components/UserContext';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth } from '../../firebase'; // Import Firebase auth instance
 
 const SignUp = () => {
   const { setUser } = useUser();
@@ -20,47 +22,50 @@ const SignUp = () => {
     setSuccess(false); // Reset success state
 
     if (formData.password !== formData.confirmPassword) {
-    setError('Passwords do not match');
-    return;
-    }      
+      setError('Passwords do not match');
+      return;
+    }
 
     try {
-      const res = await fetch('http://localhost:5000/api/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-  
-      // Check Content-Type
-      const contentType = res.headers.get('Content-Type') || '';
-      if (!contentType.includes('application/json')) {
-        throw new Error('Invalid server response: Expected JSON');
-      }
-  
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Sign-up failed');
-      }
-      
-      const data = await res.json();
+      // Use Firebase to create a new user
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      const user = userCredential.user;
 
-      localStorage.setItem('userId', data.user._id);
-      localStorage.setItem('userName', data.user.name);
-      localStorage.setItem('userEmail', data.user.email);
-      
-      setUser({ id: data.user._id, name: data.user.name });
+      // Update Firebase user profile with the name
+      await updateProfile(user, { displayName: formData.name });
+
+      console.log('Firebase User signed up:', user);
+
+      // Retrieve Firebase ID Token
+      const idToken = await user.getIdToken();
+
+      // Optionally send the token and user data to the backend to create a MongoDB record
+      await fetch('http://localhost:5000/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ name: formData.name }),
+      });
+
+      // Save user details in localStorage and context
+      localStorage.setItem('userId', user.uid);
+      localStorage.setItem('userName', user.displayName);
+      localStorage.setItem('userEmail', user.email);
+
+      setUser({ id: user.uid, name: user.displayName });
 
       setSuccess(true);
       setTimeout(() => {
         window.location.href = '/';
       }, 2000);
     } catch (err) {
-      // console.error('Error:', err.message);
+      console.error('Error during Firebase sign-up:', err.message);
       setError(err.message);
     }
   };
-  
-  
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Sign Up</h1>

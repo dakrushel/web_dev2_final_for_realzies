@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import Sidebar from './Sidebar'; // Import Sidebar for displaying roll history
 import styles from './RNGesus.module.css';
+import { useUser } from './UserContext';
+import { logRoll, fetchRollHistory } from "../api/rollsApi";
+
 
 const RNGesus = () => {
+  const { user } = useUser(); // Uses UserContext
   const [rollResult, setRollResult] = useState(null);
   const [selectedDie, setSelectedDie] = useState('d20');
   const [rollMode, setRollMode] = useState('neutral');
@@ -16,64 +20,59 @@ const RNGesus = () => {
     d20: [],
     d100: [],
   });
-  const [userId, setUserId] = useState(null);
+  // const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    
-    if (userId) {
-      // localStorage.setItem('userId', userId);
-      fetch(`http://localhost:5000/api/rolls/${userId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.error) {
-            console.error('Error fetching roll history:', data.error);
-          } else {
-            const updatedHistories = { ...rollHistories };
-            data.forEach((roll) => {
-              if (!updatedHistories[roll.rollType]) {
-                updatedHistories[roll.rollType] = [];
-              }
-              updatedHistories[roll.rollType].push({
-                result: roll.result,
-                sides: parseInt(roll.rollType.slice(1), 10),
-              });
-            });
-            setRollHistories(updatedHistories);
-          }
-        })
-        .catch((err) => console.error('Error fetching roll history:', err.message));
-    }
-    // }, [rollHistories]);
-    }, [userId]);
-    
-    // const storedUserId = localStorage.getItem('userId');
-    // if (storedUserId) {
-    //   setUserId(storedUserId);
+    const loadRollHistory = async () => {
+      if (user?.id) {
+        try {
+          const data = await fetchRollHistory();
+          if (Array.isArray(data)) {
+            // Organize roll history by dice type
+            const newHistories = {
+              d4: [],
+              d6: [],
+              d8: [],
+              d10: [],
+              d12: [],
+              d20: [],
+              d100: [],
+            };
 
-    // Fetch roll history for logged-in user
-    // fetch(`http://localhost:5000/api/rolls/${storedUserId}`)
-//     .then((res) => res.json())
-//     .then((data) => {
-//       if (data.error) {
-//         console.error('Error fetching roll history:', data.error);
-//       } else {
-//         const updatedHistories = { ...rollHistories };
-//         data.forEach((roll) => {
-//           if (!updatedHistories[roll.rollType]) {
-//             updatedHistories[roll.rollType] = [];
-//           }
-//           updatedHistories[roll.rollType].push({
-//             result: roll.result,
-//             sides: parseInt(roll.rollType.slice(1), 10),
-//           });
-//         });
-//         setRollHistories(updatedHistories);
-//       }
-//     })
-//     .catch((err) => console.error('Error fetching roll history:', err.message));
-// }
-// // }, [rollHistories]);
-// }, []);
+            data.forEach((roll) => {
+              if (newHistories[roll.rollType]) {
+                newHistories[roll.rollType].push({
+                  result: roll.result,
+                  sides: parseInt(roll.rollType.slice(1), 10),
+                });
+              }
+            });
+
+            setRollHistories(newHistories);
+          } else {
+            console.error('Error fetching roll history: Expected an array but got', typeof data);
+          }
+        } catch (err) {
+          console.error('Error fetching roll history:', err.message);
+        }
+      } else {
+        // Reset roll histories on logout
+        setRollHistories({
+          d4: [],
+          d6: [],
+          d8: [],
+          d10: [],
+          d12: [],
+          d20: [],
+          d100: [],
+        });
+      }
+    };
+
+    loadRollHistory();
+  }, [user?.id]);
+
+    
 
   const [selectedAbility, setSelectedAbility] = useState('strength');
   const [abilityCheckResult, setAbilityCheckResult] = useState(null);
@@ -113,37 +112,19 @@ const RNGesus = () => {
       setOtherRoll(null);
     }
 
-    // Update Roll History
-    // setRollHistories((prev) => ({
-    //   ...prev,
-    //   [selectedDie]: [{ result, sides }, ...prev[selectedDie]].slice(0, 10),
-    // }));
-    setRollHistories((prev) => {
-      const newHistory = { ...prev };
-      newHistory[selectedDie] = [{ result, sides }, ...prev[selectedDie]].slice(0, 10);
-      return newHistory;
-    });
 
     setRollResult(result);
 
-    if (userId) {
+    if (user?.id) {
       try {
-        const res = await fetch('http://localhost:5000/api/rolls', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, rollType: selectedDie, result }),
-        });
-      
-        console.log('Server response:', res);
-      
-        if (!res.ok) {
-          const errorText = await res.text(); // Read the full response as text
-          console.error('Error response:', errorText);
-          throw new Error('Failed to save roll');
-        }
+        await logRoll(selectedDie, result);
+        setRollHistories((prev) => ({
+          ...prev,
+          [selectedDie]: [{ result, sides }, ...prev[selectedDie]].slice(0, 10),
+        }));
       } catch (err) {
         console.error('Error saving roll:', err.message);
-      }      
+      }
     }
 
   };

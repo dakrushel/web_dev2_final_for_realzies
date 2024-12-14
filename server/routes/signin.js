@@ -1,46 +1,22 @@
-const express = require('express');
-const User = require('../models/User');
+// const express = require('express');
+// const router = express.Router();
+// const verifyFirebaseToken = require('../middleware/authMiddleware');
 
-const router = express.Router();
+// router.post('/', verifyFirebaseToken, async (req, res) => {
+//   try {
+//     // Token is valid; Firebase user is already authenticated
+//     const user = {
+//       uid: req.uid,
+//       email: req.body.email,
+//       name: req.body.name,
+//     };
+//     console.log('User authenticated via Firebase:', user);
 
-router.post('/', async (req, res) => {
-  const { email, password } = req.body;
-  console.log('Request received at /api/signin:', req.body); // Log incoming request
+//     res.status(200).json({ message: 'Sign-in successful', user });
+//   } catch (err) {
+//     console.error('Error during Firebase sign-in:', err.message);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
 
-  if (!email || !password) {
-    console.error('Email or password missing');
-    return res.status(400).json({ error: 'Both email and password are required.' });
-  }
-
-  try {
-    console.log('Looking for user with email:', email);
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      console.error('User not found:', email);
-      return res.status(401).json({ error: 'Invalid email or password.' });
-    }
-    console.log('User found:', user);
-
-    if (!user.comparePassword(password)) {
-      console.error('Invalid password for email:', email);
-      return res.status(401).json({ error: 'Invalid email or password.' });
-    }
-    console.log('Password is valid');
-
-    // Create a safe user object excluding the password field
-    const { _id, email: userEmail, name } = user;
-    const safeUser = { id: _id, email: userEmail, name };
-    console.log('User signed in successfully:', safeUser);
-
-    return res.status(200).json({
-      message: 'Sign-in successful',
-      user: safeUser,
-    });
-  } catch (err) {
-    console.error('Error during sign-in:', err.message);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-module.exports = router;
+// module.exports = router;
