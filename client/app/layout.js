@@ -1,3 +1,5 @@
+import NavBar from "./components/NavBar";
+import { UserProvider } from "./components/UserContext"
 import "./globals.css";
 
 export const metadata = {
@@ -8,7 +10,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <UserProvider>
+          <NavBar />
+          {children}
+        </UserProvider>
+      </body>
     </html>
   );
 }
