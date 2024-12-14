@@ -65,11 +65,14 @@ const RNGesus = () => {
 
   const rollEm = (sides) => Math.floor(Math.random() * sides) + 1;
 
-  const handleRoll = async () => {
+  const handleRoll = async (e) => {
+    e.preventDefault(); // Prevent unintended behaviors
+    console.log('Rolling the die');
+  
     const sides = parseInt(selectedDie.slice(1), 10);
     let result;
     let roll1, roll2;
-
+  
     if (rollMode === 'advantage') {
       roll1 = rollEm(sides);
       roll2 = rollEm(sides);
@@ -84,15 +87,16 @@ const RNGesus = () => {
       result = rollEm(sides);
       setOtherRoll(null);
     }
-
+  
     // Update Roll History
+    console.log('Local history: ', rollHistories)
     setRollHistories((prev) => ({
       ...prev,
-      [selectedDie]: [{ result, sides }, ...prev[selectedDie]].slice(0, 10),
+      [selectedDie]: [{ result, sides }, ...(prev[selectedDie] || []),].slice(0, 10),
     }));
-
+  
     setRollResult(result);
-
+  
     if (userId) {
       try {
         const res = await fetch('http://localhost:5000/api/rolls', {
@@ -100,20 +104,20 @@ const RNGesus = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId, rollType: selectedDie, result }),
         });
-      
+  
         console.log('Server response:', res);
-      
+  
         if (!res.ok) {
-          const errorText = await res.text(); // Read the full response as text
+          const errorText = await res.text();
           console.error('Error response:', errorText);
           throw new Error('Failed to save roll');
         }
       } catch (err) {
         console.error('Error saving roll:', err.message);
-      }      
+      }
     }
-
   };
+  
 
   const handleAbilityCheck = () => {
     const sides = 20; // D20 roll
