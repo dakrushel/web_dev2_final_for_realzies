@@ -1,11 +1,11 @@
 const express = require('express');
 const { logRoll, getRolls } = require('../controllers/rollController');
-const verifyFirebaseToken = require('../middleware/authMiddleware');
-
+// const verifyFirebaseToken = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.post("/", verifyFirebaseToken, logRoll); // Log a new roll
-router.get("/", verifyFirebaseToken, getRolls); // Fetch rolls for the logged-in user
+// Temporarily bypass authentication middleware for testing
+router.post("/", logRoll); // Log a new roll
+router.get("/", getRolls); // Fetch rolls
 
 module.exports = router;
