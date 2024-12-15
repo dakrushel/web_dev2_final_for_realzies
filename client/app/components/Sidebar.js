@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Sidebar.module.css';
 
-const Sidebar = ({ rollHistory, selectedDie, setSelectedDie, diceOptions, maxCount, minCount }) => {
+const Sidebar = ({ rollHistory, selectedDie, setSelectedDie, diceOptions = [], maxCount, minCount }) => {
   return (
     <div className={styles.sidebar}>
       <h2 className={styles.historyTitle}>Roll History</h2>
