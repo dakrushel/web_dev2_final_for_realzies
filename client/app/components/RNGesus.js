@@ -3,7 +3,7 @@ import Sidebar from './Sidebar'; // Import Sidebar for displaying roll history
 import styles from './RNGesus.module.css';
 import { useUser } from './UserContext';
 import { logRoll, fetchRollHistory } from "../api/rollsApi";
-
+ 
 
 const RNGesus = () => {
   const { user } = useUser(); // Uses UserContext
